@@ -2,6 +2,7 @@ import express, { Express } from 'express';
 import dotenv from 'dotenv';
 import authRouter from './module/auth/route/auth.route';
 import userRouter from './module/user/route/user.route';
+import DataBase from './config/database';
 
 dotenv.config();
 
@@ -16,6 +17,15 @@ const main = async () => {
         authRouter,
         userRouter
     );
+
+    try {
+        await DataBase.initialize().then(() => {
+            console.log("The connection to the database is established");
+        });
+    } catch (e) {
+        console.log(`[ ERROR ] Database connection problems: ${e?.sqlMessage}`);
+        console.log(e);
+    }
 
     app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
