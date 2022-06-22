@@ -3,8 +3,10 @@ import {
     Column,
     CreateDateColumn,
     Entity,
+    OneToMany,
     PrimaryGeneratedColumn,
 } from 'typeorm';
+import { File } from './File';
 
 @Entity({ name: "users" })
 export class User extends BaseEntity {
@@ -32,11 +34,9 @@ export class User extends BaseEntity {
     })
     gender: boolean;
 
-    @Column({
-        default: null,
-    })
-    photo: string;
-
     @CreateDateColumn()
     created: Date;
+
+    @OneToMany(type => File, file => file.user, { eager: true })
+    photo: File[];
 }

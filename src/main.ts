@@ -10,7 +10,16 @@ const main = async () => {
     const app: Express = express();
     const PORT: string = process.env.PORT;
 
-    app.use(express.json());
+    app.use(express.static("public"));
+
+    app.use(express.json(),
+        (err, req, res, next) => {
+            if(err) {
+                res.status(400);
+                res.json({...err});
+            }
+        }
+    );
 
     app.use(
         "/api",
