@@ -8,10 +8,9 @@ import middlewareFileLoader, { IFileLoaded } from '../../../middleware/middlewar
 import { UserProfileUpdateDto, UserProfileEditValidation } from '../dto-validation/User';
 import path from 'path';
 import cfg from '../../../config/app.config';
-import { UserService } from '../service/UserService';
+import { IUserList, UserService } from '../service/UserService';
 import { User } from '../entity/User';
 import { File } from '../entity/File';
-import { SelectQueryBuilder } from 'typeorm';
 
 const middlewareFileLoaderConfig = {
     file_path: path.join(cfg.DIR_PUBLIC_ROOT, 'file'),
@@ -81,19 +80,16 @@ router.get("/profile",
     async (req: any, res: Response) => {
         const page: number = Number(req.query?.page) || 1;
         const limit: number = Number(req.query?.limit) || 10;
-        const skip: number = (page - 1) * limit;
 
-        const qb: SelectQueryBuilder<User> = User.getRepository().createQueryBuilder();
-
-        const total: number = await qb.getCount();
-        qb.skip(skip).take(limit);
-        qb.addOrderBy("created", "ASC");
-
-        const user_list = await qb.getMany();
+        const {
+            total,
+            page_last,
+            user_list
+        }: IUserList = await userService.getUserList(page, limit);
 
         res.setHeader("x-total-count", total);
         res.setHeader("x-page-current", page);
-        res.setHeader("x-page-last", Math.ceil(total / limit));
+        res.setHeader("x-page-last", page_last);
 
         res.json({user_list});
     }
