@@ -38,8 +38,6 @@ const updateUserData = async (dto: UserProfileUpdateDto & { user_id: number }): 
     user.surname = dto.surname;
     user.gender = dto.gender;
     await user.save();
-
-    delete user.password;
     
     return user;
 };
@@ -60,6 +58,13 @@ const getUserByEmail = async (email: string): Promise<User> => {
     });
 }
 
+const getUserWithPasswordByEmail = (email: string): Promise<User> => {
+    return repo.createQueryBuilder()
+        .select("*")
+        .where("email = :email", { email })
+        .getRawOne();
+};
+
 export default repo.extend({
     getUserList,
     getUserTotal,
@@ -67,4 +72,5 @@ export default repo.extend({
     updateUserData,
     createUser,
     getUserByEmail,
+    getUserWithPasswordByEmail,
 });

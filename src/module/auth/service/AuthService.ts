@@ -31,7 +31,7 @@ export class AuthService {
     async login(dto: AuthLoginUserDto): Promise<string> {
         try {
 
-            const user: User = await UserRepository.getUserByEmail(dto.email);
+            const user: User = await UserRepository.getUserWithPasswordByEmail(dto.email);
             if(!user) {
                 throw "User not found";
             }
@@ -40,6 +40,7 @@ export class AuthService {
                 dto.password,
                 user.password
             );
+            delete user.password;
             if(!isPasswordEquals) {
                 throw "Invalid password";
             }

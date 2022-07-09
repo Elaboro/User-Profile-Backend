@@ -30,9 +30,7 @@ export class UserService {
     }
 
     async getUserProfileById(user_id: number): Promise<IUserProfile> {
-
         const user: User = await UserRepository.getUserById(user_id);
-        delete user.password;
 
         return userProfilePresenter(user);
     }
