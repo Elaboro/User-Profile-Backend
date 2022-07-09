@@ -5,12 +5,19 @@ import {
 } from 'express';
 import middlewareValidationHandler from '../../../middleware/middlewareValidationHandler';
 import middlewareFileLoader, { IFileLoaded } from '../../../middleware/middlewareFileLoader';
-import { UserProfileUpdateDto, UserProfileEditValidation } from '../dto-validation/User';
+import {
+    UserProfileUpdateDto,
+    UserProfileEditValidation
+} from '../dto-validation/User';
 import path from 'path';
 import cfg from '../../../config/app.config';
-import { IUserList, UserService } from '../service/UserService';
+import { UserService } from '../service/UserService';
 import { User } from '../entity/User';
 import { File } from '../entity/File';
+import {
+    IUserProfile,
+    IUserProfileList,
+} from '../../../type/Type';
 
 const middlewareFileLoaderConfig = {
     file_path: path.join(cfg.DIR_PUBLIC_ROOT, 'file'),
@@ -143,12 +150,11 @@ router.post("/profile/:user_id/photo/upload",
  */
 router.get("/profile/:user_id",
     async (req: Request, res: Response) => {
-        const user_id: any = req.params?.user_id;
+        const user_id: number = Number(req.params?.user_id);
 
-        const user: User = await User.findOneBy({user_id});
-        delete user.password;
+        const profile: IUserProfile = await userService.getUserProfileById(user_id);
 
-        res.json({user});
+        res.json({...profile});
     }
 );
 
@@ -185,14 +191,14 @@ router.get("/profile",
         const {
             total,
             page_last,
-            user_list
-        }: IUserList = await userService.getUserList(page, limit);
+            user_profile_list
+        }: IUserProfileList = await userService.getUserList(page, limit);
 
         res.setHeader("x-total-count", total);
         res.setHeader("x-page-current", page);
         res.setHeader("x-page-last", page_last);
 
-        res.json({user_list});
+        res.json(user_profile_list);
     }
 );
 
