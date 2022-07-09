@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import authRouter from './module/auth/route/auth.route';
 import userRouter from './module/user/route/user.route';
 import DataBase from './config/database';
+import initSwagger from './config/swagger';
 
 dotenv.config();
 
@@ -26,6 +27,13 @@ const main = async () => {
         authRouter,
         userRouter
     );
+
+    const {
+        url,
+        serve,
+        setup
+    } = initSwagger();
+    app.use(url, serve, setup);
 
     try {
         await DataBase.initialize().then(() => {

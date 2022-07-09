@@ -45,6 +45,7 @@ export type UserProfileUpdateDto = Omit<UserField,
     | "validationPassword"
     | "validationSurname"
     | "validationGender"
+    | "password"
 >;
 export const UserProfileEditValidation = [
     UserField.validationName,

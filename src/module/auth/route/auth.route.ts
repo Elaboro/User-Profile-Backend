@@ -15,6 +15,36 @@ import { AuthService } from '../service/AuthService';
 const router: Router = Router();
 const authService = new AuthService();
 
+/**
+ * @swagger
+ * /user/register:
+ *   post:
+ *     tags:
+ *     - Auth
+ *     summary: User registration
+ *     parameters:
+ *     - in: body
+ *       name: body
+ *       schema:
+ *         type: object
+ *         required:
+ *         - name
+ *         - email
+ *         - password
+ *         properties:
+ *           name:
+ *             example: user
+ *             type: string
+ *           email:
+ *             example: user@user.user
+ *             type: string
+ *           password:
+ *             example: user
+ *             type: string
+ *     responses:
+ *       200:
+ *         description: Successfully
+ */
 router.post("/user/register",
     AuthRegisterUserValidation,
     middlewareValidationHandler,
@@ -27,6 +57,32 @@ router.post("/user/register",
     }
 );
 
+/**
+ * @swagger
+ * /user/login:
+ *   post:
+ *     tags:
+ *     - Auth
+ *     summary: User authorization
+ *     parameters:
+ *     - in: body
+ *       name: body
+ *       schema:
+ *         type: object
+ *         required:
+ *         - email
+ *         - password
+ *         properties:
+ *           email:
+ *             example: user@user.user
+ *             type: string
+ *           password:
+ *             example: user
+ *             type: string
+ *     responses:
+ *       200:
+ *         description: Successfully
+ */
 router.post("/user/login",
     AuthLoginUserValidation,
     middlewareValidationHandler,
