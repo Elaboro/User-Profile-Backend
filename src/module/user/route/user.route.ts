@@ -12,7 +12,6 @@ import {
 import path from 'path';
 import cfg from '../../../config/app.config';
 import { UserService } from '../service/UserService';
-import { User } from '../entity/User';
 import { File } from '../entity/File';
 import {
     IUserProfile,
@@ -77,7 +76,7 @@ router.put("/profile/:user_id",
         const user_id: any = req.params?.user_id;
         const dto: UserProfileUpdateDto = req?.body;
 
-        const user: User = await userService.update({...dto, user_id});
+        const user: IUserProfile = await userService.update({...dto, user_id});
 
         res.json({user});
     }

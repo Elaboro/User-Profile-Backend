@@ -6,27 +6,21 @@ import {
     AuthLoginUserDto,
     AuthRegisterUserDto,
 } from '../dto-validation/AuthUserDto';
+import UserRepository from '../../user/repository/UserRepository';
 
 dotenv.config();
 
 export class AuthService {
     async register(dto: AuthRegisterUserDto): Promise<string> {
         try {
-            const isUserCreated: User = await User.findOne<User>({
-                where: { email: dto.email }
-            });
 
+            const isUserCreated: User = await UserRepository.getUserByEmail(dto.email);
             if(isUserCreated) {
                 throw "User is already registered";
             }
 
             const password_hash: string = await bcrypt.hash(dto.password, 8);
-
-            const user: User = new User();
-            user.name = dto.name;
-            user.email = dto.email;
-            user.password = password_hash;
-            await user.save();
+            const user = await UserRepository.createUser({...dto, password: password_hash});
 
             return this.generateToken(user);
         } catch (e) { 
@@ -36,12 +30,8 @@ export class AuthService {
 
     async login(dto: AuthLoginUserDto): Promise<string> {
         try {
-            const email: string  = dto.email;
 
-            const user = await User.findOne({ 
-                where: { email }
-            });
-
+            const user: User = await UserRepository.getUserByEmail(dto.email);
             if(!user) {
                 throw "User not found";
             }
@@ -50,7 +40,6 @@ export class AuthService {
                 dto.password,
                 user.password
             );
-
             if(!isPasswordEquals) {
                 throw "Invalid password";
             }

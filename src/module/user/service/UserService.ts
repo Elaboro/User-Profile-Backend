@@ -6,25 +6,10 @@ import UserRepository from "../repository/UserRepository";
 
 export class UserService {
 
-    async update(dto: UserProfileUpdateDto & { user_id: number }): Promise<User> {
-        try {
-            const {
-                user_id
-            } = dto;
+    async update(dto: UserProfileUpdateDto & { user_id: number }): Promise<IUserProfile> {
+        const user: User = await UserRepository.updateUserData(dto);
 
-            const user: User = await User.findOneBy({user_id});
-            user.name = dto.name;
-            user.email = dto.email;
-            user.surname = dto.surname;
-            user.gender = dto.gender;
-            await user.save();
-
-            delete user.password;
-            
-            return user;
-        } catch(e) {
-            console.log(e);
-        }
+        return userProfilePresenter(user);
     }
 
     async getUserList(page: number, limit: number): Promise<IUserProfileList> {
