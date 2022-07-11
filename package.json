@@ -4,6 +4,10 @@
   "description": "",
   "scripts": {
     "start": "nodemon",
+    "migration:run": "npx typeorm-ts-node-esm migration:run -d \"./src/config/database.ts\"",
+    "migration:revert": "npx typeorm-ts-node-esm migration:revert -d \"./src/config/database.ts\"",
+    "migration:generate": "npx typeorm-ts-node-esm migration:generate -d \"./src/config/database.ts\" --pretty",
+    "migration:create": "npx typeorm-ts-node-esm migration:create",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
