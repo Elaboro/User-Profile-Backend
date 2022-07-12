@@ -37,16 +37,14 @@ const main = async () => {
 
     try {
         await DataBase.initialize().then(() => {
-            console.log("The connection to the database is established");
+            console.log("Connection to database is established");
+        });
+        app.listen(PORT, () => {
+            console.log(`Server running on port ${PORT}`);
         });
     } catch (e) {
-        console.log(`[ ERROR ] Database connection problems: ${e?.sqlMessage}`);
-        console.log(e);
+        console.log(e); 
     }
-
-    app.listen(PORT, () => {
-        console.log(`Server running on port ${PORT}`);
-    });
 };
 
 export default main;

@@ -61,8 +61,6 @@ const router: Router = Router();
  *             example: surname user
  *             type: string
  *           gender:
- *             #example:
- *             #  - 1
  *             oneOf:
  *               - type: boolean
  *                 example: true
