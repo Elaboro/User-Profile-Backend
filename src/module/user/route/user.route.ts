@@ -36,6 +36,8 @@ const router: Router = Router();
  * @swagger
  * /profile/{user_id}:
  *   put:
+ *     security:
+ *       - jwt: []
  *     tags:
  *     - User
  *     summary: Editing user profile
@@ -104,6 +106,8 @@ const onCreateFileName = async (extension: string): Promise<string> => {
  * @swagger
  * /profile/{user_id}/photo/upload:
  *   post:
+ *     security:
+ *       - jwt: []
  *     tags:
  *     - User
  *     summary: Uploading photo for user profile
