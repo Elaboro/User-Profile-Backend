@@ -18,6 +18,8 @@ import {
     IUserProfile,
     IUserProfileList,
 } from '../../../type/Type';
+import { FileService } from '../service/FileService';
+import { UserProfilePhotoDeleteDto, UserProfilePhotoDeleteValidation } from '../dto-validation/File';
 
 const middlewareFileLoaderConfig = {
     file_path: path.join(cfg.DIR_PUBLIC_ROOT, 'file'),
@@ -29,6 +31,7 @@ const middlewareFileLoaderConfig = {
 };
 
 const userService = new UserService();
+const fileService = new FileService();
 
 const router: Router = Router();
 
@@ -107,7 +110,7 @@ const onCreateFileName = async (extension: string): Promise<string> => {
  *     security:
  *       - jwt: []
  *     tags:
- *     - User
+ *     - User files
  *     summary: Uploading photo for user profile
  *     parameters:
  *     - name: user_id
@@ -148,6 +151,55 @@ router.post("/profile/:user_id/photo/upload",
         const file_loaded = req.private_local;
 
         res.json({file_loaded});
+    }
+);
+
+/**
+ * @swagger
+ * /profile/{user_id}/photo/delete:
+ *   post:
+ *     security:
+ *       - jwt: []
+ *     tags:
+ *     - User files
+ *     summary: Delete photo or array photos by id
+ *     parameters:
+ *     - name: user_id
+ *       example: 1
+ *       in: path
+ *       required: true
+ *       type: number
+ *     - in: body
+ *       name: body
+ *       required: true
+ *       schema:
+ *         type: object
+ *         properties:
+ *           photo_id:
+ *             example: |
+ *               [
+ *                 "1f527223-76e9-4ee3-bce5-4900072bc393",
+ *                 "0cb19040-69eb-4639-b871-bafcbda43304",
+ *                 "2f44ed67-412a-4e6f-818f-16e6c66ca3e5"
+ *               ]
+ *             type: array
+ *             items:
+ *               type: string
+ *               format: uuid
+ *     responses:
+ *       200:
+ *         description: Successfully
+ */
+router.post("/profile/:user_id/photo/delete",
+    middlewareAuthGuard,
+    UserProfilePhotoDeleteValidation,
+    middlewareValidationHandler,
+    async (req: Request, res: Response) => {
+        const req_user_id: number = req.app.locals?.user?.user_id;
+        const dto: UserProfilePhotoDeleteDto = { photo_id: req.body?.photo_id};
+
+        const result = await fileService.delete(dto, req_user_id);
+        res.json(result);
     }
 );
 
