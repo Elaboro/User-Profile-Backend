@@ -142,15 +142,11 @@ router.post("/profile/:user_id/photo/upload",
             });
         }
 
-        const file_name = req.private_local.file_name;
+        const file_name: IFileLoaded = req.private_local;
+        await fileService.saveFile(file_name, user_id);
 
-        const photo: File = await File.findOneBy({file_name});
-        photo.user_id = user_id;
-        photo.save();
-
-        const file_loaded = req.private_local;
-
-        res.json({file_loaded});
+        const user: IUserProfile = await userService.getUserProfileById(user_id);
+        res.json(user);
     }
 );
 

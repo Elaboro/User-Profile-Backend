@@ -1,3 +1,4 @@
+import { IFileLoaded } from "../../../middleware/middlewareFileLoader";
 import { UserProfilePhotoDeleteDto } from "../dto-validation/File";
 import { File } from "../entity/File";
 import FileRepository from "../repository/FileRepository";
@@ -9,6 +10,10 @@ interface ResultFileDelete {
 };
 
 export class FileService {
+    
+    async saveFile(file: IFileLoaded, user_id: number): Promise<File> {
+        return await FileRepository.saveFile({file, user_id});
+    }
 
     async delete({ photo_id }: UserProfilePhotoDeleteDto, user_id: number): Promise<ResultFileDelete[]> {
 

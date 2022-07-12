@@ -10,9 +10,9 @@ export interface IMiddlewareFileLoader {
 }
 
 export interface IFileLoaded {
-    extension,
-    file_name,
-    original_name
+    extension: string;
+    file_name: string;
+    original_name: string;
 }
 
 export default function middlewareFileLoader({
