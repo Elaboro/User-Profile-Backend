@@ -5,6 +5,7 @@ import {
 } from 'express';
 import middlewareValidationHandler from '../../../middleware/middlewareValidationHandler';
 import middlewareFileLoader, { IFileLoaded } from '../../../middleware/middlewareFileLoader';
+import middlewareAuthGuard from '../../../middleware/middlewareAuthGuard';
 import {
     UserProfileUpdateDto,
     UserProfileEditValidation
@@ -70,10 +71,19 @@ const router: Router = Router();
  *         description: Successfully
  */
 router.put("/profile/:user_id",
+    middlewareAuthGuard,
     UserProfileEditValidation,
     middlewareValidationHandler,
     async (req: Request, res: Response) => {
-        const user_id: any = req.params?.user_id;
+        const user_req: any = req.app.locals?.user;
+        const user_id: number = Number(req.params?.user_id);
+
+        if(Number(user_req?.user_id) !== user_id) {
+            return res.status(403).json({
+                message: "Forbidden: Cannot be edited."
+            });
+        }
+
         const dto: UserProfileUpdateDto = req?.body;
 
         const user: IUserProfile = await userService.update({...dto, user_id});
@@ -112,12 +122,21 @@ const onCreateFileName = async (extension: string): Promise<string> => {
  *         description: Successfully
  */
 router.post("/profile/:user_id/photo/upload",
+    middlewareAuthGuard,
     middlewareFileLoader({
         ...middlewareFileLoaderConfig,
         onCreateFileName
     }).single("photo"),
     async (req: Request & { private_local: IFileLoaded }, res: Response) => {
-        const user_id: any = req.params?.user_id;
+        const user_req: any = req.app.locals?.user;
+        const user_id: number = Number(req.params?.user_id);
+
+        if(Number(user_req?.user_id) !== user_id) {
+            return res.status(403).json({
+                message: "Forbidden: Cannot be uploaded."
+            });
+        }
+
         const file_name = req.private_local.file_name;
 
         const photo: File = await File.findOneBy({file_name});
