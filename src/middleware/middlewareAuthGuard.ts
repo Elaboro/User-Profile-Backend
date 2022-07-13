@@ -3,10 +3,8 @@ import {
     Response ,
 } from "express";
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import dotenv from 'dotenv';
+import cfg from "../config/app.config";
 import { User } from "../module/user/entity/User";
-
-dotenv.config();
 
 const middlewareAuthGuard = (req: Request, res: Response, next) => {
     const auth_header: string = req?.headers?.authorization;
@@ -19,7 +17,7 @@ const middlewareAuthGuard = (req: Request, res: Response, next) => {
         });
     }
 
-    const user: string | JwtPayload | User = jwt.verify(token, `${process.env.JWT_SECRET_KEY}`);
+    const user: string | JwtPayload | User = jwt.verify(token, cfg.JWT_SECRET_KEY);
     req.app.locals.user = user;
     next();
 };

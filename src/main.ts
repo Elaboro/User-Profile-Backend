@@ -1,15 +1,13 @@
 import express, { Express } from 'express';
-import dotenv from 'dotenv';
+import cfg from './config/app.config';
 import authRouter from './module/auth/route/auth.route';
 import userRouter from './module/user/route/user.route';
 import DataBase from './config/database';
 import initSwagger from './config/swagger';
 
-dotenv.config();
-
 const main = async () => {
     const app: Express = express();
-    const PORT: string = process.env.PORT;
+    const PORT: string = cfg.PORT;
 
     app.use(express.static("public"));
 

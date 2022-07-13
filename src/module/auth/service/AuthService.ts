@@ -1,14 +1,12 @@
+import cfg from '../../../config/app.config';
 import { User } from '../../user/entity/User';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
 import {
     AuthLoginUserDto,
     AuthRegisterUserDto,
 } from '../dto-validation/AuthUserDto';
 import UserRepository from '../../user/repository/UserRepository';
-
-dotenv.config();
 
 export class AuthService {
     async register(dto: AuthRegisterUserDto): Promise<string> {
@@ -65,8 +63,8 @@ export class AuthService {
 
         return jwt.sign(
             payload,
-            `${process.env.JWT_SECRET_KEY}`,
-            { expiresIn: `${process.env.JWT_EXPIRES_IN}` }
+            cfg.JWT_SECRET_KEY,
+            { expiresIn: cfg.JWT_EXPIRES_IN }
         );
     }
 }
