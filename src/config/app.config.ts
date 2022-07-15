@@ -5,6 +5,7 @@ dotenv.config();
 
 const CONSTANTS = {
     DIR_PRIVATE_ROOT: path.join(__dirname, '..', '..', 'storage', 'private'),
+    DIR_PUBLIC_ROOT: path.join(__dirname, '..', '..', 'storage', 'public'),
 };
 
 const cfg = {
@@ -20,9 +21,10 @@ const cfg = {
     URL_FILES: process.env.URL_FILES,
     SWAGGER_OPTIONS_HOST: process.env.SWAGGER_OPTIONS_HOST,
     DIR_SRC_ROOT: path.join(__dirname, '..'),
-    DIR_PUBLIC_ROOT: path.join(__dirname, '..', '..', 'storage', 'public'),
+    DIR_PUBLIC_ROOT: CONSTANTS.DIR_PUBLIC_ROOT,
     DIR_PRIVATE_ROOT: CONSTANTS.DIR_PRIVATE_ROOT,
     DIR_FILE_UPLOADER_TEMP_FILES: path.join(CONSTANTS.DIR_PRIVATE_ROOT, 'temp'),
+    DIR_UPLOADED_FILES: path.join(CONSTANTS.DIR_PUBLIC_ROOT, 'file'),
 };
 
 export default cfg;

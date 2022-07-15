@@ -36,7 +36,7 @@ export class UserFileService {
 
             const item: StorageMove = {
                 path_from: f.destination,
-                path_to: path.join(cfg.DIR_PUBLIC_ROOT, 'file'),
+                path_to: cfg.DIR_UPLOADED_FILES,
                 file_name: file_name_new,
             };
             storage.move(item);
@@ -63,7 +63,7 @@ export class UserFileService {
 
             const storage: Storage = new FileSystemStorage();
             const item: StorageDelete = {
-                path: path.join(cfg.DIR_PUBLIC_ROOT, 'file'),
+                path: cfg.DIR_UPLOADED_FILES,
                 file_name: `${fileEntity.file_name}.${fileEntity.extension}`
             };
             storage.delete(item);
