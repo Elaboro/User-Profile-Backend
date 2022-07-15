@@ -1,16 +1,18 @@
 import cfg from "../../../config/app.config";
 import { IPhoto, IUserProfile } from "../../../type/Type";
 import { User } from "../entity/User";
+import { File } from "../entity/File";
+
+export const photoProfilePresenter = (photo_array: File[]): IPhoto[] => {
+    return photo_array.map((file: File): IPhoto => ({
+        photo_id: file.file_name,
+        link: `${cfg.URL_FILES}${file.file_name}.${file.extension}`,
+    }));
+};
 
 export const userProfilePresenter = (user: User): IUserProfile => {
 
-    const photo: IPhoto[] = user.photo.map((file): IPhoto => {
-        const photo: IPhoto = {
-            photo_id: file.file_name,
-            link: `${cfg.URL_FILES}${file.file_name}.${file.extension}`,
-        };
-        return photo;
-    });
+    const photo: IPhoto[] = photoProfilePresenter(user.photo);
 
     return {
         user_id: user.user_id,

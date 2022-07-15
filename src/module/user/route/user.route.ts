@@ -4,34 +4,30 @@ import {
     Router
 } from 'express';
 import middlewareValidationHandler from '../../../middleware/middlewareValidationHandler';
-import middlewareFileLoader, { IFileLoaded } from '../../../middleware/middlewareFileLoader';
 import middlewareAuthGuard from '../../../middleware/middlewareAuthGuard';
+import middlewareProfilePhotoLoader from '../../../middleware/middlewareProfilePhotoLoader';
 import {
     UserProfileUpdateDto,
-    UserProfileEditValidation
+    UserProfileEditValidation,
 } from '../dto-validation/User';
-import path from 'path';
-import cfg from '../../../config/app.config';
 import { UserService } from '../service/UserService';
 import { File } from '../entity/File';
 import {
+    FileDto,
+    ILocals,
     IUserProfile,
     IUserProfileList,
+    UserPayload,
 } from '../../../type/Type';
-import { FileService } from '../service/FileService';
-import { UserProfilePhotoDeleteDto, UserProfilePhotoDeleteValidation } from '../dto-validation/File';
-
-const middlewareFileLoaderConfig = {
-    file_path: path.join(cfg.DIR_PUBLIC_ROOT, 'file'),
-    file_size_max: 10485760 + 1,
-    mimetype_white_list: [
-        "image/jpeg",
-        "image/png",
-    ],
-};
+import {
+    UserProfilePhotoDeleteDto,
+    UserProfilePhotoDeleteValidation
+} from '../dto-validation/File';
+import { UserFileService } from '../service/UserFileService';
+import { photoProfilePresenter } from '../presenter/userProfilePresenter';
 
 const userService = new UserService();
-const fileService = new FileService();
+const userFileService = new UserFileService();
 
 const router: Router = Router();
 
@@ -77,11 +73,11 @@ router.put("/profile/:user_id",
     middlewareAuthGuard,
     UserProfileEditValidation,
     middlewareValidationHandler,
-    async (req: Request, res: Response) => {
-        const user_req: any = req.app.locals?.user;
+    async (req: Request, res: Response & { locals: ILocals }) => {
+        const user_payload: UserPayload = res.locals.user_payload;
         const user_id: number = Number(req.params?.user_id);
 
-        if(Number(user_req?.user_id) !== user_id) {
+        if(Number(user_payload?.user_id) !== user_id) {
             return res.status(403).json({
                 message: "Forbidden: Cannot be edited."
             });
@@ -91,17 +87,9 @@ router.put("/profile/:user_id",
 
         const user: IUserProfile = await userService.update({...dto, user_id});
 
-        res.json({user});
+        res.json(user);
     }
 );
-
-const onCreateFileName = async (extension: string): Promise<string> => {
-    const file: File = new File();
-    file.extension = extension;
-    await file.save();
-
-    return file.file_name;
-};
 
 /**
  * @swagger
@@ -128,25 +116,24 @@ const onCreateFileName = async (extension: string): Promise<string> => {
  */
 router.post("/profile/:user_id/photo/upload",
     middlewareAuthGuard,
-    middlewareFileLoader({
-        ...middlewareFileLoaderConfig,
-        onCreateFileName
-    }).single("photo"),
-    async (req: Request & { private_local: IFileLoaded }, res: Response) => {
-        const user_req: any = req.app.locals?.user;
+    middlewareProfilePhotoLoader.array("photo"),
+    async (req: Request, res: Response & { locals: ILocals }) => {
+        const user_payload: UserPayload = res.locals.user_payload;
         const user_id: number = Number(req.params?.user_id);
 
-        if(Number(user_req?.user_id) !== user_id) {
+        if(Number(user_payload?.user_id) !== user_id) {
             return res.status(403).json({
                 message: "Forbidden: Cannot be uploaded."
             });
         }
 
-        const file_name: IFileLoaded = req.private_local;
-        await fileService.saveFile(file_name, user_id);
+        const dto: FileDto = {
+            files: req.files,
+            user_payload: res.locals.user_payload
+        };
 
-        const user: IUserProfile = await userService.getUserProfileById(user_id);
-        res.json(user);
+        const photo_array: File[] = await userFileService.save(dto);
+        res.json(photoProfilePresenter(photo_array));
     }
 );
 
@@ -190,11 +177,11 @@ router.post("/profile/:user_id/photo/delete",
     middlewareAuthGuard,
     UserProfilePhotoDeleteValidation,
     middlewareValidationHandler,
-    async (req: Request, res: Response) => {
-        const req_user_id: number = req.app.locals?.user?.user_id;
+    async (req: Request, res: Response & { locals: ILocals }) => {
+        const user_payload: UserPayload = res.locals.user_payload;
         const dto: UserProfilePhotoDeleteDto = { photo_id: req.body?.photo_id};
 
-        const result = await fileService.delete(dto, req_user_id);
+        const result = await userFileService.delete(dto, user_payload.user_id);
         res.json(result);
     }
 );
@@ -252,7 +239,7 @@ router.get("/profile/:user_id",
  *         description: Successfully
  */
 router.get("/profile",
-    async (req: any, res: Response) => {
+    async (req: Request, res: Response) => {
         const page: number = Number(req.query?.page) || 1;
         const limit: number = Number(req.query?.limit) || 10;
 

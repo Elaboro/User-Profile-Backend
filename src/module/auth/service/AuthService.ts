@@ -7,11 +7,12 @@ import {
     AuthRegisterUserDto,
 } from '../dto-validation/AuthUserDto';
 import UserRepository from '../../user/repository/UserRepository';
+import { UserPayload } from '../../../type/Type';
 
 export class AuthService {
+
     async register(dto: AuthRegisterUserDto): Promise<string> {
         try {
-
             const isUserCreated: User = await UserRepository.getUserByEmail(dto.email);
             if(isUserCreated) {
                 throw "User is already registered";
@@ -28,7 +29,6 @@ export class AuthService {
 
     async login(dto: AuthLoginUserDto): Promise<string> {
         try {
-
             const user: User = await UserRepository.getUserWithPasswordByEmail(dto.email);
             if(!user) {
                 throw "User not found";
@@ -54,8 +54,7 @@ export class AuthService {
         name,
         email
     }: User): string {
-
-        const payload = {
+        const payload: UserPayload = {
             user_id,
             name,
             email

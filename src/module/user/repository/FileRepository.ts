@@ -1,6 +1,6 @@
 import { Repository } from "typeorm";
 import AppDataSource from "../../../config/database";
-import { IFileLoaded } from "../../../middleware/middlewareFileLoader";
+import { FileDto } from "../../../type/Type";
 import { File } from "../entity/File";
 
 const repo: Repository<File> = AppDataSource.getRepository(File);
@@ -13,17 +13,22 @@ const findFile = async (file_name: string): Promise<File> => {
     return await repo.findOne({ where: { file_name }});
 }
 
-const saveFile = async ({file, user_id}: { 
-    file: IFileLoaded,
-    user_id: number,
-}): Promise<File> => {
-    const photo: File = await repo.findOneBy({file_name: file.file_name});
-    photo.user_id = user_id;
-    return photo.save();
+const create = async (dto: FileDto): Promise<File[]> => {
+
+    const file_list: Promise<File>[] = (<Express.Multer.File[]>dto.files).map(
+        async (f: Express.Multer.File): Promise<File> => {
+            const file: File = new File();
+            file.user_id = dto.user_payload.user_id;
+            file.extension = f.filename.split(".").pop();
+            return await file.save();
+        }
+    );
+
+    return Promise.all(file_list);
 };
 
 export default repo.extend({
     deleteFile,
     findFile,
-    saveFile,
+    create,
 });

@@ -9,7 +9,7 @@ const main = async () => {
     const app: Express = express();
     const PORT: string = cfg.PORT;
 
-    app.use(express.static("public"));
+    app.use(express.static(cfg.DIR_PUBLIC_ROOT));
 
     app.use(express.json(),
         (err, req, res, next) => {

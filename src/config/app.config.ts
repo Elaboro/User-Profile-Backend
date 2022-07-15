@@ -3,10 +3,11 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const cfg: {
-    DATABASE_PORT: number;
-    [property: string]: any;
-} = {
+const CONSTANTS = {
+    DIR_PRIVATE_ROOT: path.join(__dirname, '..', '..', 'storage', 'private'),
+};
+
+const cfg = {
     PORT: process.env.PORT,
     DATABASE_HOST: process.env.DATABASE_HOST,
     DATABASE_PORT: Number(process.env.DATABASE_PORT),
@@ -19,7 +20,9 @@ const cfg: {
     URL_FILES: process.env.URL_FILES,
     SWAGGER_OPTIONS_HOST: process.env.SWAGGER_OPTIONS_HOST,
     DIR_SRC_ROOT: path.join(__dirname, '..'),
-    DIR_PUBLIC_ROOT: path.join(__dirname, '..', '..', 'public'),
+    DIR_PUBLIC_ROOT: path.join(__dirname, '..', '..', 'storage', 'public'),
+    DIR_PRIVATE_ROOT: CONSTANTS.DIR_PRIVATE_ROOT,
+    DIR_FILE_UPLOADER_TEMP_FILES: path.join(CONSTANTS.DIR_PRIVATE_ROOT, 'temp'),
 };
 
 export default cfg;

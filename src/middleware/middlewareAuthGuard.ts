@@ -2,11 +2,18 @@ import {
     Request,
     Response ,
 } from "express";
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import cfg from "../config/app.config";
-import { User } from "../module/user/entity/User";
+import {
+    ILocals,
+    UserPayload
+} from "../type/Type";
 
-const middlewareAuthGuard = (req: Request, res: Response, next) => {
+const middlewareAuthGuard = (
+    req: Request,
+    res: Response & { locals: ILocals },
+    next
+) => {
     const auth_header: string = req?.headers?.authorization;
     const bearer: string = auth_header?.split(' ')[0]?.toLowerCase();
     const token: string = auth_header?.split(' ')[1];
@@ -17,8 +24,8 @@ const middlewareAuthGuard = (req: Request, res: Response, next) => {
         });
     }
 
-    const user: string | JwtPayload | User = jwt.verify(token, cfg.JWT_SECRET_KEY);
-    req.app.locals.user = user;
+    const user_payload: UserPayload = <UserPayload>jwt.verify(token, cfg.JWT_SECRET_KEY);
+    res.locals.user_payload = user_payload;
     next();
 };
 
