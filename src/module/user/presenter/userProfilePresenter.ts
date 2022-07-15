@@ -3,7 +3,7 @@ import { IPhoto, IUserProfile } from "../../../type/Type";
 import { User } from "../entity/User";
 import { File } from "../entity/File";
 
-export const photoProfilePresenter = (photo_array: File[]): IPhoto[] => {
+export const userProfilePhotoPresenter = (photo_array: File[]): IPhoto[] => {
     return photo_array.map((file: File): IPhoto => ({
         photo_id: file.file_name,
         link: `${cfg.URL_FILES}${file.file_name}.${file.extension}`,
@@ -12,7 +12,7 @@ export const photoProfilePresenter = (photo_array: File[]): IPhoto[] => {
 
 export const userProfilePresenter = (user: User): IUserProfile => {
 
-    const photo: IPhoto[] = photoProfilePresenter(user.photo);
+    const photo: IPhoto[] = userProfilePhotoPresenter(user.photo);
 
     return {
         user_id: user.user_id,

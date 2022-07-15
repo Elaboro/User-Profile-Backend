@@ -5,7 +5,7 @@ import {
 } from 'express';
 import middlewareValidationHandler from '../../../middleware/middlewareValidationHandler';
 import middlewareAuthGuard from '../../../middleware/middlewareAuthGuard';
-import middlewareProfilePhotoLoader from '../../../middleware/middlewareProfilePhotoLoader';
+import middlewareProfilePhotoUploader from '../../../middleware/middlewareProfilePhotoUploader';
 import {
     UserProfileUpdateDto,
     UserProfileEditValidation,
@@ -24,7 +24,7 @@ import {
     UserProfilePhotoDeleteValidation
 } from '../dto-validation/File';
 import { UserFileService } from '../service/UserFileService';
-import { photoProfilePresenter } from '../presenter/userProfilePresenter';
+import { userProfilePhotoPresenter } from '../presenter/userProfilePresenter';
 
 const userService = new UserService();
 const userFileService = new UserFileService();
@@ -116,7 +116,7 @@ router.put("/profile/:user_id",
  */
 router.post("/profile/:user_id/photo/upload",
     middlewareAuthGuard,
-    middlewareProfilePhotoLoader.array("photo"),
+    middlewareProfilePhotoUploader.array("photo"),
     async (req: Request, res: Response & { locals: ILocals }) => {
         const user_payload: UserPayload = res.locals.user_payload;
         const user_id: number = Number(req.params?.user_id);
@@ -133,7 +133,7 @@ router.post("/profile/:user_id/photo/upload",
         };
 
         const photo_array: File[] = await userFileService.save(dto);
-        res.json(photoProfilePresenter(photo_array));
+        res.json(userProfilePhotoPresenter(photo_array));
     }
 );
 
