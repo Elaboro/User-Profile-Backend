@@ -1,7 +1,6 @@
 import express, { Express, NextFunction, Request, Response } from 'express';
 import cfg from './config/app.config';
-import authRouter from './module/auth/route/auth.route';
-import userRouter from './module/user/route/user.route';
+import { mainRoute } from './module/main.route';
 import DataBase from './config/database';
 import initSwagger from './config/swagger';
 
@@ -20,11 +19,7 @@ const main = async () => {
         }
     );
 
-    app.use(
-        "/api",
-        authRouter,
-        userRouter
-    );
+    app.use(cfg.API_URL_PREFIX, mainRoute);
 
     const {
         url,
