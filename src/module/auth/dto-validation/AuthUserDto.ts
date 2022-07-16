@@ -2,6 +2,7 @@ import {
     check,
     ValidationChain
 } from 'express-validator';
+import middlewareValidator from '../../../middleware/middlewareValidator';
 
 class AuthUserSetting {
     readonly name: string;
@@ -32,11 +33,11 @@ export type AuthRegisterUserDto = Omit<AuthUserSetting,
     | "validationEmail"
     | "validationPassword"
 >;
-export const AuthRegisterUserValidation = [
+export const AuthRegisterUserValidation = middlewareValidator([
     AuthUserSetting.validationName,
     AuthUserSetting.validationEmail,
     AuthUserSetting.validationPassword,
-];
+]);
 
 
 export type AuthLoginUserDto = Omit<AuthUserSetting,
@@ -45,7 +46,7 @@ export type AuthLoginUserDto = Omit<AuthUserSetting,
     | "validationPassword"
     | "name"
 >;
-export const AuthLoginUserValidation = [
+export const AuthLoginUserValidation = middlewareValidator([
     AuthUserSetting.validationEmail,
     AuthUserSetting.validationPassword,
-];
+]);

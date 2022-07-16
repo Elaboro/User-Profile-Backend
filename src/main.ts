@@ -1,4 +1,4 @@
-import express, { Express } from 'express';
+import express, { Express, NextFunction, Request, Response } from 'express';
 import cfg from './config/app.config';
 import authRouter from './module/auth/route/auth.route';
 import userRouter from './module/user/route/user.route';
@@ -12,7 +12,7 @@ const main = async () => {
     app.use(express.static(cfg.DIR_PUBLIC_ROOT));
 
     app.use(express.json(),
-        (err, req, res, next) => {
+        (err: any, req: Request, res: Response, next: NextFunction) => {
             if(err) {
                 res.status(400);
                 res.json({...err});

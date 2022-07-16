@@ -3,7 +3,6 @@ import {
     Response,
     Router
 } from 'express';
-import middlewareValidationHandler from '../../../middleware/middlewareValidationHandler';
 import middlewareAuthGuard from '../../../middleware/middlewareAuthGuard';
 import middlewareProfilePhotoUploader from '../../../middleware/middlewareProfilePhotoUploader';
 import {
@@ -72,7 +71,6 @@ const router: Router = Router();
 router.put("/profile/:user_id",
     middlewareAuthGuard,
     UserProfileEditValidation,
-    middlewareValidationHandler,
     async (req: Request, res: Response & { locals: ILocals }) => {
         const user_payload: UserPayload = res.locals.user_payload;
         const user_id: number = Number(req.params?.user_id);
@@ -176,7 +174,6 @@ router.post("/profile/:user_id/photo/upload",
 router.post("/profile/:user_id/photo/delete",
     middlewareAuthGuard,
     UserProfilePhotoDeleteValidation,
-    middlewareValidationHandler,
     async (req: Request, res: Response & { locals: ILocals }) => {
         const user_payload: UserPayload = res.locals.user_payload;
         const dto: UserProfilePhotoDeleteDto = { photo_id: req.body?.photo_id};

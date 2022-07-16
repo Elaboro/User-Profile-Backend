@@ -1,4 +1,5 @@
 import { check, ValidationChain } from "express-validator";
+import middlewareValidator from "../../../middleware/middlewareValidator";
 
 class FileField {
     readonly photo_id: Array<string>;
@@ -15,6 +16,6 @@ class FileField {
 }
 
 export type UserProfilePhotoDeleteDto = Omit<FileField, "validationPhotoId">;
-export const UserProfilePhotoDeleteValidation = [
+export const UserProfilePhotoDeleteValidation = middlewareValidator([
     FileField.validationPhotoId,
-];
+]);

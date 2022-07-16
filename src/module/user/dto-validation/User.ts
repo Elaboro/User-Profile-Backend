@@ -2,6 +2,7 @@ import {
     check,
     ValidationChain
 } from 'express-validator';
+import middlewareValidator from '../../../middleware/middlewareValidator';
 
 class UserField {
     readonly name: string;
@@ -47,9 +48,9 @@ export type UserProfileUpdateDto = Omit<UserField,
     | "validationGender"
     | "password"
 >;
-export const UserProfileEditValidation = [
+export const UserProfileEditValidation = middlewareValidator([
     UserField.validationName,
     UserField.validationEmail,
     UserField.validationSurname,
     UserField.validationGender,
-];
+]);

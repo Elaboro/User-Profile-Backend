@@ -1,4 +1,5 @@
 import {
+    NextFunction,
     Request,
     Response ,
 } from "express";
@@ -12,7 +13,7 @@ import {
 const middlewareAuthGuard = (
     req: Request,
     res: Response & { locals: ILocals },
-    next
+    next: NextFunction
 ) => {
     const auth_header: string = req?.headers?.authorization;
     const bearer: string = auth_header?.split(' ')[0]?.toLowerCase();

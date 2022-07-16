@@ -3,7 +3,6 @@ import {
     Response,
     Router
 } from 'express';
-import middlewareValidationHandler from '../../../middleware/middlewareValidationHandler';
 import {
     AuthLoginUserDto,
     AuthLoginUserValidation,
@@ -47,7 +46,6 @@ const authService = new AuthService();
  */
 router.post("/user/register",
     AuthRegisterUserValidation,
-    middlewareValidationHandler,
     async (req: Request, res: Response) => {
         const dto: AuthRegisterUserDto = req?.body;
 
@@ -85,7 +83,6 @@ router.post("/user/register",
  */
 router.post("/user/login",
     AuthLoginUserValidation,
-    middlewareValidationHandler,
     async (req: Request, res: Response) => {
         const dto: AuthLoginUserDto = req?.body;
 
