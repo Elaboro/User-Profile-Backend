@@ -9,8 +9,8 @@ const deleteFile = async (file: File): Promise<File> => {
     return await repo.remove(file);
 };
 
-const findFile = async (file_name: string): Promise<File> => {
-    return await repo.findOne({ where: { file_name }});
+const findFile = async (filename: string): Promise<File> => {
+    return await repo.findOne({ where: { filename }});
 }
 
 const create = async (dto: FileDto): Promise<File[]> => {

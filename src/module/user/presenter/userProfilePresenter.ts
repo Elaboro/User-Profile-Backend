@@ -5,8 +5,8 @@ import { File } from "../entity/File";
 
 export const userProfilePhotoPresenter = (photo_array: File[]): IPhoto[] => {
     return photo_array.map((file: File): IPhoto => ({
-        photo_id: file.file_name,
-        link: `${cfg.URL_FILES}${file.file_name}.${file.extension}`,
+        photo_id: file.filename,
+        link: `${cfg.URL_FILES}${file.filename}.${file.extension}`,
     }));
 };
 

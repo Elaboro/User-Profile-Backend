@@ -27,17 +27,17 @@ export class UserFileService {
         const files: Express.Multer.File[] = <Express.Multer.File[]>dto.files;
         files.map(async (f: Express.Multer.File, i: number) => {
 
-            const file_name_new: string = `${file[i].file_name}.${file[i].extension}`;
+            const filename_new: string = `${file[i].filename}.${file[i].extension}`;
 
             storage.rename({
                 path_old: path.join(f.destination, f.filename),
-                path_new: path.join(f.destination, file_name_new),
+                path_new: path.join(f.destination, filename_new),
             });
 
             const item: StorageMove = {
                 path_from: f.destination,
                 path_to: cfg.DIR_UPLOADED_FILES,
-                file_name: file_name_new,
+                filename: filename_new,
             };
             storage.move(item);
         });
@@ -46,14 +46,14 @@ export class UserFileService {
     }
 
     async delete({ photo_id }: UserProfilePhotoDeleteDto, user_id: number): Promise<ResultFileDelete[]> {
-        const arr_result: Promise<ResultFileDelete>[] = photo_id.map(async (file_name: string) => {
+        const arr_result: Promise<ResultFileDelete>[] = photo_id.map(async (filename: string) => {
             const result: ResultFileDelete = {
                 message: null,
                 status: false,
-                photo_id: file_name,
+                photo_id: filename,
             };
 
-            const fileEntity: File = await FileRepository.findFile(file_name);
+            const fileEntity: File = await FileRepository.findFile(filename);
 
             if(!fileEntity) 
                 return { ...result, message: "Entity not found" };
@@ -64,7 +64,7 @@ export class UserFileService {
             const storage: Storage = new FileSystemStorage();
             const item: StorageDelete = {
                 path: cfg.DIR_UPLOADED_FILES,
-                file_name: `${fileEntity.file_name}.${fileEntity.extension}`
+                filename: `${fileEntity.filename}.${fileEntity.extension}`
             };
             storage.delete(item);
 

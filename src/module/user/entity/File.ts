@@ -11,7 +11,7 @@ import { User } from "./User";
 @Entity({ name: "files" })
 export class File extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
-    file_name: string;
+    filename: string;
 
     @Column()
     extension: string;

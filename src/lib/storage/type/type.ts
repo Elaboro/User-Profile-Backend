@@ -7,7 +7,7 @@ export interface Storage {
 export interface StorageMove {
     path_from: string;
     path_to: string;
-    file_name: string;
+    filename: string;
 }
 
 export interface StorageRename {
@@ -17,5 +17,5 @@ export interface StorageRename {
 
 export interface StorageDelete {
     path: string;
-    file_name: string;
+    filename: string;
 }

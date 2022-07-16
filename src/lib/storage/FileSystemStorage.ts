@@ -29,15 +29,15 @@ export class FileSystemStorage implements Storage {
             }
     
             const readeble: ReadStream = fs.createReadStream(
-                path.join(item.path_from, item.file_name),
+                path.join(item.path_from, item.filename),
             );
     
             const writeble: WriteStream = fs.createWriteStream(
-                path.join(item.path_to, item.file_name)
+                path.join(item.path_to, item.filename)
             );
     
             readeble.pipe(writeble).on("finish", () => {
-                fsp.unlink(path.join(item.path_from, item.file_name));
+                fsp.unlink(path.join(item.path_from, item.filename));
             });
         } catch (e) {
             console.log(e);
@@ -46,7 +46,7 @@ export class FileSystemStorage implements Storage {
 
     async delete(item: StorageDelete): Promise<void> {
         try {
-            fsp.unlink(path.join(item.path, item.file_name));
+            fsp.unlink(path.join(item.path, item.filename));
         } catch (e) {
             console.log(e);
         }
