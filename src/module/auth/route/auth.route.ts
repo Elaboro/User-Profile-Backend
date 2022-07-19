@@ -1,7 +1,8 @@
 import {
+    NextFunction,
     Request,
     Response,
-    Router
+    Router,
 } from 'express';
 import {
     AuthLoginUserDto,
@@ -46,12 +47,16 @@ const authService = new AuthService();
  */
 router.post("/user/register",
     AuthRegisterUserValidation,
-    async (req: Request, res: Response) => {
-        const dto: AuthRegisterUserDto = req?.body;
+    async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const dto: AuthRegisterUserDto = req?.body;
 
-        const token: string = await authService.register(dto);
+            const token: string = await authService.register(dto);
 
-        res.json({token});
+            res.json({token});
+        } catch(e) {
+            next(e);
+        };
     }
 );
 
@@ -83,12 +88,16 @@ router.post("/user/register",
  */
 router.post("/user/login",
     AuthLoginUserValidation,
-    async (req: Request, res: Response) => {
-        const dto: AuthLoginUserDto = req?.body;
+    async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const dto: AuthLoginUserDto = req?.body;
 
-        const token: string = await authService.login(dto);
+            const token: string = await authService.login(dto);
 
-        res.json({token});
+            res.json({token});
+        } catch(e) {
+            next(e);
+        };
     }
 );
 

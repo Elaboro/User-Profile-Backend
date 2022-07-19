@@ -1,7 +1,8 @@
 import {
+    NextFunction,
     Request,
     Response,
-    Router
+    Router,
 } from 'express';
 import middlewareAuthGuard from '../../../middleware/middlewareAuthGuard';
 import middlewareProfilePhotoUploader from '../../../middleware/middlewareProfilePhotoUploader';
@@ -71,21 +72,25 @@ const router: Router = Router();
 router.put("/profile/:user_id",
     middlewareAuthGuard,
     UserProfileEditValidation,
-    async (req: Request, res: Response & { locals: ILocals }) => {
-        const user_payload: UserPayload = res.locals.user_payload;
-        const user_id: number = Number(req.params?.user_id);
+    async (req: Request, res: Response & { locals: ILocals }, next: NextFunction) => {
+        try {
+            const user_payload: UserPayload = res.locals.user_payload;
+            const user_id: number = Number(req.params?.user_id);
 
-        if(Number(user_payload?.user_id) !== user_id) {
-            return res.status(403).json({
-                message: "Forbidden: Cannot be edited."
-            });
-        }
+            if(Number(user_payload?.user_id) !== user_id) {
+                return res.status(403).json({
+                    message: "Forbidden: Cannot be edited."
+                });
+            }
 
-        const dto: UserProfileUpdateDto = req?.body;
+            const dto: UserProfileUpdateDto = req?.body;
 
-        const user: IUserProfile = await userService.update({...dto, user_id});
+            const user: IUserProfile = await userService.update({...dto, user_id});
 
-        res.json(user);
+            res.json(user);
+        } catch(e) {
+            next(e);
+        };
     }
 );
 
@@ -115,23 +120,27 @@ router.put("/profile/:user_id",
 router.post("/profile/:user_id/photo/upload",
     middlewareAuthGuard,
     middlewareProfilePhotoUploader.array("photo"),
-    async (req: Request, res: Response & { locals: ILocals }) => {
-        const user_payload: UserPayload = res.locals.user_payload;
-        const user_id: number = Number(req.params?.user_id);
+    async (req: Request, res: Response & { locals: ILocals }, next: NextFunction) => {
+        try {
+            const user_payload: UserPayload = res.locals.user_payload;
+            const user_id: number = Number(req.params?.user_id);
 
-        if(Number(user_payload?.user_id) !== user_id) {
-            return res.status(403).json({
-                message: "Forbidden: Cannot be uploaded."
-            });
-        }
+            if(Number(user_payload?.user_id) !== user_id) {
+                return res.status(403).json({
+                    message: "Forbidden: Cannot be uploaded."
+                });
+            }
 
-        const dto: FileDto = {
-            files: req.files,
-            user_payload: res.locals.user_payload
+            const dto: FileDto = {
+                files: req.files,
+                user_payload: res.locals.user_payload
+            };
+
+            const photo_array: File[] = await userFileService.save(dto);
+            res.json(userProfilePhotoPresenter(photo_array));
+        } catch(e) {
+            next(e);
         };
-
-        const photo_array: File[] = await userFileService.save(dto);
-        res.json(userProfilePhotoPresenter(photo_array));
     }
 );
 
@@ -174,12 +183,16 @@ router.post("/profile/:user_id/photo/upload",
 router.post("/profile/:user_id/photo/delete",
     middlewareAuthGuard,
     UserProfilePhotoDeleteValidation,
-    async (req: Request, res: Response & { locals: ILocals }) => {
-        const user_payload: UserPayload = res.locals.user_payload;
-        const dto: UserProfilePhotoDeleteDto = { photo_id: req.body?.photo_id};
+    async (req: Request, res: Response & { locals: ILocals }, next: NextFunction) => {
+        try {
+            const user_payload: UserPayload = res.locals.user_payload;
+            const dto: UserProfilePhotoDeleteDto = { photo_id: req.body?.photo_id};
 
-        const result = await userFileService.delete(dto, user_payload.user_id);
-        res.json(result);
+            const result = await userFileService.delete(dto, user_payload.user_id);
+            res.json(result);
+        } catch(e) {
+            next(e);
+        };
     }
 );
 
@@ -201,12 +214,16 @@ router.post("/profile/:user_id/photo/delete",
  *         description: Successfully
  */
 router.get("/profile/:user_id",
-    async (req: Request, res: Response) => {
-        const user_id: number = Number(req.params?.user_id);
+    async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const user_id: number = Number(req.params?.user_id);
 
-        const profile: IUserProfile = await userService.getUserProfileById(user_id);
+            const profile: IUserProfile = await userService.getUserProfileById(user_id);
 
-        res.json({...profile});
+            res.json({...profile});
+        } catch(e) {
+            next(e);
+        };
     }
 );
 
@@ -236,21 +253,25 @@ router.get("/profile/:user_id",
  *         description: Successfully
  */
 router.get("/profile",
-    async (req: Request, res: Response) => {
-        const page: number = Number(req.query?.page) || 1;
-        const limit: number = Number(req.query?.limit) || 10;
+    async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const page: number = Number(req.query?.page) || 1;
+            const limit: number = Number(req.query?.limit) || 10;
 
-        const {
-            total,
-            page_last,
-            user_profile_list
-        }: IUserProfileList = await userService.getUserList(page, limit);
+            const {
+                total,
+                page_last,
+                user_profile_list
+            }: IUserProfileList = await userService.getUserList(page, limit);
 
-        res.setHeader("x-total-count", total);
-        res.setHeader("x-page-current", page);
-        res.setHeader("x-page-last", page_last);
+            res.setHeader("x-total-count", total);
+            res.setHeader("x-page-current", page);
+            res.setHeader("x-page-last", page_last);
 
-        res.json(user_profile_list);
+            res.json(user_profile_list);
+        } catch(e) {
+            next(e);
+        };
     }
 );
 

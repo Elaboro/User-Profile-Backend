@@ -5,6 +5,7 @@ import {
 } from "express";
 import jwt from 'jsonwebtoken';
 import cfg from "../config/app.config";
+import { UnauthorizedError } from "../lib/error/Error";
 import {
     ILocals,
     UserPayload
@@ -20,14 +21,17 @@ const middlewareAuthGuard = (
     const token: string = auth_header?.split(' ')[1];
 
     if (bearer !== "bearer" || !token) {
-        return res.status(403).json({
-            message: "Forbidden: User is unauthorized"
-        });
+        next(new UnauthorizedError("User is unauthorized. Invalid token or missing"));
+        return;
     }
 
-    const user_payload: UserPayload = <UserPayload>jwt.verify(token, cfg.JWT_SECRET_KEY);
-    res.locals.user_payload = user_payload;
-    next();
+    try {
+        const user_payload: UserPayload = <UserPayload>jwt.verify(token, cfg.JWT_SECRET_KEY);
+        res.locals.user_payload = user_payload;
+        next();
+    } catch(e) {
+        next(new UnauthorizedError("User is unauthorized. Invalid token"));
+    }
 };
 
 export default middlewareAuthGuard;

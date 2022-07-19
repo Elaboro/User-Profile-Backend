@@ -8,45 +8,42 @@ import {
 } from '../dto-validation/AuthUserDto';
 import UserRepository from '../../user/repository/UserRepository';
 import { UserPayload } from '../../../type/Type';
+import {
+    DuplicateError,
+    ForbiddenError,
+    NotFoundError,
+} from '../../../lib/error/Error';
 
 export class AuthService {
 
     async register(dto: AuthRegisterUserDto): Promise<string> {
-        try {
-            const isUserCreated: User = await UserRepository.getUserByEmail(dto.email);
-            if(isUserCreated) {
-                throw "User is already registered";
-            }
-
-            const password_hash: string = await bcrypt.hash(dto.password, 8);
-            const user = await UserRepository.createUser({...dto, password: password_hash});
-
-            return this.generateToken(user);
-        } catch (e) { 
-            console.log(e);
+        const isUserCreated: User = await UserRepository.getUserByEmail(dto.email);
+        if(isUserCreated) {
+            throw new DuplicateError("User is already registered");
         }
+
+        const password_hash: string = await bcrypt.hash(dto.password, 8);
+        const user = await UserRepository.createUser({...dto, password: password_hash});
+
+        return this.generateToken(user);
     }
 
     async login(dto: AuthLoginUserDto): Promise<string> {
-        try {
-            const user: User = await UserRepository.getUserWithPasswordByEmail(dto.email);
-            if(!user) {
-                throw "User not found";
-            }
-
-            const isPasswordEquals: boolean = await bcrypt.compare(
-                dto.password,
-                user.password
-            );
-            delete user.password;
-            if(!isPasswordEquals) {
-                throw "Invalid password";
-            }
-
-            return this.generateToken(user);
-        } catch (e) {
-            console.log(e);
+        const user: User = await UserRepository.getUserWithPasswordByEmail(dto.email);
+        if(!user) {
+            throw new NotFoundError("User is unregistered");
         }
+
+        const isPasswordEquals: boolean = await bcrypt.compare(
+            dto.password,
+            user.password
+        );
+        delete user.password;
+        if(!isPasswordEquals) {
+            throw new ForbiddenError("Invalid password");
+        }
+
+        return this.generateToken(user);
     }
 
     private generateToken({
