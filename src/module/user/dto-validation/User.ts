@@ -39,14 +39,11 @@ class UserField {
         .toBoolean();
 }
 
-
-export type UserProfileUpdateDto = Omit<UserField,
-    "validationName"
-    | "validationEmail"
-    | "validationPassword"
-    | "validationSurname"
-    | "validationGender"
-    | "password"
+export type UserProfileUpdateDto = Pick<UserField,
+"name"
+| "email"
+| "surname"
+| "gender"
 >;
 export const UserProfileEditValidation = middlewareValidator([
     UserField.validationName,

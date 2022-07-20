@@ -27,11 +27,10 @@ class AuthUserSetting {
         }).withMessage("Field must contain from 4 to 30 characters");
 }
 
-
-export type AuthRegisterUserDto = Omit<AuthUserSetting,
-    "validationName"
-    | "validationEmail"
-    | "validationPassword"
+export type AuthRegisterUserDto = Pick<AuthUserSetting,
+"name"
+| "email"
+| "password"
 >;
 export const AuthRegisterUserValidation = middlewareValidator([
     AuthUserSetting.validationName,
@@ -39,12 +38,9 @@ export const AuthRegisterUserValidation = middlewareValidator([
     AuthUserSetting.validationPassword,
 ]);
 
-
-export type AuthLoginUserDto = Omit<AuthUserSetting,
-    "validationName"
-    | "validationEmail"
-    | "validationPassword"
-    | "name"
+export type AuthLoginUserDto = Pick<AuthUserSetting,
+"email"
+| "password"
 >;
 export const AuthLoginUserValidation = middlewareValidator([
     AuthUserSetting.validationEmail,

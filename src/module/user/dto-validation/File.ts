@@ -15,7 +15,9 @@ class FileField {
         }).withMessage("String value in array must be uuid4");
 }
 
-export type UserProfilePhotoDeleteDto = Omit<FileField, "validationPhotoId">;
+export type UserProfilePhotoDeleteDto = Pick<FileField,
+"photo_id"
+>;
 export const UserProfilePhotoDeleteValidation = middlewareValidator([
     FileField.validationPhotoId,
 ]);
