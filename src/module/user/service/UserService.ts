@@ -1,5 +1,5 @@
 import { IUserProfile, IUserProfileList } from "../../../type/Type";
-import { UserProfileUpdateDto } from "../dto-validation/User";
+import { UserProfileUpdateDto } from "../dto/User";
 import { User } from "../entity/User";
 import { userProfilePresenter } from "../presenter/userProfilePresenter";
 import UserRepository from "../repository/UserRepository";

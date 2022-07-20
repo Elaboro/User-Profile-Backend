@@ -9,7 +9,7 @@ import {
 } from "../../../lib/storage/type/type";
 import { File } from "../entity/File";
 import FileRepository from "../repository/FileRepository";
-import { UserProfilePhotoDeleteDto } from "../dto-validation/File";
+import { UserProfilePhotoDeleteDto } from "../dto/File";
 
 interface ResultFileDelete {
     message: string;

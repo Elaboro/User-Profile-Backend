@@ -9,7 +9,7 @@ import middlewareProfilePhotoUploader from '../../../middleware/middlewareProfil
 import {
     UserProfileUpdateDto,
     UserProfileEditValidation,
-} from '../dto-validation/User';
+} from '../dto/User';
 import { UserService } from '../service/UserService';
 import { File } from '../entity/File';
 import {
@@ -22,7 +22,7 @@ import {
 import {
     UserProfilePhotoDeleteDto,
     UserProfilePhotoDeleteValidation
-} from '../dto-validation/File';
+} from '../dto/File';
 import { UserFileService } from '../service/UserFileService';
 import { userProfilePhotoPresenter } from '../presenter/userProfilePresenter';
 

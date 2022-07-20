@@ -4,8 +4,8 @@ import {
     SelectQueryBuilder,
 } from "typeorm";
 import { User } from "../entity/User";
-import { UserProfileUpdateDto } from "../dto-validation/User";
-import { AuthRegisterUserDto } from "../../auth/dto-validation/AuthUserDto";
+import { UserProfileUpdateDto } from "../dto/User";
+import { AuthRegisterUserDto } from "../../auth/dto/AuthUserDto";
 
 const repo: Repository<User> = AppDataSource.getRepository(User);
 

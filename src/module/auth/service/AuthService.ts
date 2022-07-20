@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 import {
     AuthLoginUserDto,
     AuthRegisterUserDto,
-} from '../dto-validation/AuthUserDto';
+} from '../dto/AuthUserDto';
 import UserRepository from '../../user/repository/UserRepository';
 import { UserPayload } from '../../../type/Type';
 import {

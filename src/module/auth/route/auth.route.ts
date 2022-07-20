@@ -9,7 +9,7 @@ import {
     AuthLoginUserValidation,
     AuthRegisterUserDto,
     AuthRegisterUserValidation,
-} from '../dto-validation/AuthUserDto';
+} from '../dto/AuthUserDto';
 import { AuthService } from '../service/AuthService';
 
 const router: Router = Router();
