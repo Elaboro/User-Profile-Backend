@@ -5,12 +5,13 @@ import cfg from './app.config';
 
 /**
  * @swagger
- * securityDefinitions:
- *   jwt:
- *     type: apiKey
- *     in: header
- *     name: Authorization
- *     description: <b>Value example:</b> Bearer \<token\><br><br>
+ * components:
+ *   securitySchemes:
+ *     jwt:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ *       description: <b>Value example:</b> \<token\><br><br>
  */
 
 const initSwagger = (): {
@@ -23,10 +24,20 @@ const initSwagger = (): {
             title: "User profile API",
             version: "1.0.0",
         },
-        host: `${cfg.SWAGGER_OPTIONS_HOST}/api`,
-        schemes: [
-            "http",
-            "https"
+        openapi: "3.0.0",
+        servers: [
+            {
+                url: `{scheme}://${cfg.SWAGGER_OPTIONS_HOST}/api`,
+                variables: {
+                    scheme: {
+                        enum: [
+                            "http",
+                            "https",
+                        ],
+                        default: "http"
+                    },
+                },
+            },
         ],
     };
 

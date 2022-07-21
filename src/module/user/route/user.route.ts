@@ -45,26 +45,27 @@ const router: Router = Router();
  *       example: 1
  *       in: path
  *       required: true
- *     - in: body
- *       name: body
- *       schema:
- *         type: object
- *         properties:
- *           name:
- *             example: user
- *             type: string
- *           email:
- *             example: user@user.user
- *             type: string
- *           surname:
- *             example: surname user
- *             type: string
- *           gender:
- *             oneOf:
- *               - type: boolean
- *                 example: true
- *               - type: number
- *                 example: 1
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 example: user
+ *                 type: string
+ *               email:
+ *                 example: user@user.user
+ *                 type: string
+ *               surname:
+ *                 example: surname user
+ *                 type: string
+ *               gender:
+ *                 oneOf:
+ *                   - type: boolean
+ *                     example: true
+ *                   - type: number
+ *                     example: 1
  *     responses:
  *       200:
  *         description: Successfully
@@ -108,11 +109,20 @@ router.put("/profile/:user_id",
  *       example: 1
  *       in: path
  *       required: true
- *       type: number
- *     - name: photo
- *       in: formData
- *       type: file
- *       required: true
+ *       schema:
+ *         type: number
+ *     requestBody:
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               photo:
+ *                 type: array
+ *                 name: photo
+ *                 items:
+ *                   type: file
+ *                   format: binary
  *     responses:
  *       200:
  *         description: Successfully
@@ -158,24 +168,27 @@ router.post("/profile/:user_id/photo/upload",
  *       example: 1
  *       in: path
  *       required: true
- *       type: number
- *     - in: body
- *       name: body
- *       required: true
  *       schema:
- *         type: object
- *         properties:
- *           photo_id:
- *             example: |
- *               [
- *                 "1f527223-76e9-4ee3-bce5-4900072bc393",
- *                 "0cb19040-69eb-4639-b871-bafcbda43304",
- *                 "2f44ed67-412a-4e6f-818f-16e6c66ca3e5"
- *               ]
- *             type: array
- *             items:
- *               type: string
- *               format: uuid
+ *         type: number
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - photo_id
+ *             properties:
+ *               photo_id:
+ *                 example: |
+ *                   [
+ *                     "1f527223-76e9-4ee3-bce5-4900072bc393",
+ *                     "0cb19040-69eb-4639-b871-bafcbda43304",
+ *                     "2f44ed67-412a-4e6f-818f-16e6c66ca3e5"
+ *                   ]
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: uuid
  *     responses:
  *       200:
  *         description: Successfully
@@ -208,7 +221,8 @@ router.post("/profile/:user_id/photo/delete",
  *       example: 1
  *       in: path
  *       required: true
- *       type: number
+ *       schema:
+ *         type: number
  *     responses:
  *       200:
  *         description: Successfully
@@ -238,19 +252,36 @@ router.get("/profile/:user_id",
  *       Returns all user profiles.
  *       You can select limit and page.
  *       You can also get data in the header:
- *       - x-page-current (current page)
- *       - x-page-last (last page)
- *       - x-total-count (total number of user profiles)
+ *       - <b>x-page-current</b> (current page)
+ *       - <b>x-page-last</b> (last page)
+ *       - <b>x-total-count</b> (total number of user profiles)
  *     parameters:
  *     - in: query
  *       name: page
- *       type: number
+ *       schema:
+ *         type: number
+ *       example: 1
  *     - in: query
  *       name: limit
- *       type: number
+ *       schema:
+ *         type: number
+ *       example: 3
  *     responses:
  *       200:
  *         description: Successfully
+ *         headers:
+ *           x-page-current:
+ *             description: Number current page
+ *             schema:
+ *             type: number
+ *           x-page-last:
+ *             description: Number last page
+ *             schema:
+ *             type: number
+ *           x-total-count:
+ *             description: Total number of user profiles
+ *             schema:
+ *             type: number
  */
 router.get("/profile",
     async (req: Request, res: Response, next: NextFunction) => {
