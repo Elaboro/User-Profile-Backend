@@ -5,12 +5,14 @@ import DataBase from './config/database';
 import initSwagger from './config/swagger';
 import middlewareExpressJson from './middleware/middlewareExpressJson';
 import middlewareErrorHandler from './middleware/middlewareErrorHandler';
+import FileSystem from './config/file.system.config';
 
 const main = async () => {
     const app: Express = express();
     const PORT: string = cfg.PORT;
 
     app.use(express.static(cfg.DIR_PUBLIC_ROOT));
+    FileSystem.initialize();
 
     app.use(express.json(), middlewareExpressJson);
     app.use(cfg.API_URL_PREFIX, mainRoute);
